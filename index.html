@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en-AU">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Fridge Pickles</title>
+<style>
+:root{color-scheme:light;--ink:#213827;--green:#284b36;--paper:#faf7ed;--line:#d9dfce;--muted:#475b49}
+*{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.55 system-ui,sans-serif}
+header{background:var(--green);color:#fffbed;padding:clamp(2rem,6vw,4rem) max(1rem,calc((100% - 68rem)/2))}
+h1,h2{font-family:Georgia,serif;line-height:1.08}h1{font-size:clamp(2.5rem,7vw,5rem);max-width:13ch;margin:.4rem 0 1rem}h2{font-size:1.8rem;margin:0 0 1rem}
+.eyebrow{font-size:.82rem;font-weight:750;letter-spacing:.16em;text-transform:uppercase}header p{max-width:44ch;margin-bottom:0}
+main{max-width:70rem;margin:auto;padding:1rem;display:grid;gap:1rem}
+.notice{background:#f0e4b7;border-radius:.8rem;padding:.85rem 1rem}
+.grid{display:grid;grid-template-columns:minmax(0,2fr) minmax(0,3fr);gap:1rem;align-items:start}
+.card{background:#fffdf6;border:1px solid var(--line);border-radius:1rem;padding:clamp(1rem,3vw,1.6rem)}
+label{display:block;font-weight:650;margin-top:.85rem}
+input,select,button{font:inherit;color:inherit}input:not([type=checkbox]),select,textarea{width:100%;min-width:0;border:1px solid #81917f;border-radius:.45rem;padding:.55rem;background:white}input[type=checkbox]{accent-color:var(--green)}
+.pair{display:grid;grid-template-columns:2fr 1fr;gap:.6rem;align-items:end}
+small,.muted{color:var(--muted)}small{display:block;margin-top:.3rem}
+.summary{background:#e7efdc;border-radius:.7rem;padding:.8rem 1rem;margin:0 0 1rem}.summary strong{font-size:1.5rem}
+table{width:100%;border-collapse:collapse}caption{text-align:left;font-weight:750;padding:.4rem 0}th,td{padding:.4rem 0;border-bottom:1px solid var(--line)}th{text-align:left;font-weight:500}td{text-align:right;padding-left:.6rem;font-variant-numeric:tabular-nums}
+.actions{display:flex;flex-wrap:wrap;gap:.5rem;margin-top:1rem}button{cursor:pointer;background:var(--green);color:white;border:0;border-radius:.5rem;padding:.6rem 1rem}button:disabled{opacity:.55;cursor:default}
+:focus-visible{outline:3px solid #99702b;outline-offset:3px}a{color:#285039}li+li{margin-top:.45rem}textarea{min-height:12rem;margin-top:.6rem}#status{margin:0}
+@media(max-width:42rem){.grid{grid-template-columns:1fr}}
+@media print{body,.card,header,.notice,.summary{background:white;color:black}header{padding:0}h1{font-size:2rem;max-width:none}main{padding:0}.grid{display:block}.controls,.actions,#status,#copyFallback,.eyebrow,header p{display:none!important}.card{padding:.5rem 0;border:0}tr,li{break-inside:avoid}}
+</style>
+<header>
+<div class="eyebrow">Small-batch kitchen · Australian metric</div>
+<h1>Fridge Pickles</h1>
+<p>Weigh your cucumbers, estimate how much brine will fit around them, and scale the whole-spice mix to suit.</p>
+</header>
+<main>
+<div class="notice"><strong>Fridge only.</strong> Keep at 4 °C or colder and use within 2 weeks of making. This recipe is not shelf stable.</div>
+<noscript><p>Enable JavaScript to calculate your batch.</p></noscript>
+<div class="grid">
+<section class="card controls" aria-labelledby="setup">
+<h2 id="setup">Set your batch</h2>
+<form id="batch">
+<div class="pair">
+<label>Cucumber weight<input id="weight" type="number" inputmode="decimal" min="0" step="any" value="1000" required></label>
+<label>Unit<select id="unit"><option value="g">g</option><option value="kg">kg</option></select></label>
+</div>
+<label>Jar capacity (mL)<input id="jar" type="number" inputmode="numeric" min="1" step="any" value="500" required></label>
+<label>Packing yield (g of cucumber per litre of jar capacity)<input id="packing" type="number" inputmode="decimal" min="1" max="999" step="any" value="600" required></label>
+<label>Extra brine (%)<input id="extra" type="number" inputmode="decimal" min="0" step="any" value="15" required></label>
+<label>Override final brine volume (mL)<input id="override" type="number" inputmode="decimal" min="1" step="any" placeholder="Use estimate"></label>
+<small>Leave blank to use the estimate plus extra brine. An override replaces both.</small>
+<label><input id="sugar" type="checkbox" checked> Include optional sugar</label>
+<label><input id="crisper" type="checkbox"> Include calcium chloride flakes</label>
+<small>Artisans Bottega 77% CaCl₂ flakes (E509). Pack dose: ¼ Australian teaspoon per litre of brine.</small>
+</form>
+</section>
+<section class="card" aria-labelledby="recipe">
+<h2 id="recipe">Your batch</h2>
+<p id="summary" class="summary" aria-live="polite"></p>
+<div id="ingredients">
+<table><caption>Brine</caption><tbody id="brine"></tbody></table>
+<table><caption>Whole spices · divide across packed jars</caption><tbody id="spices"></tbody></table>
+<p class="muted">For fractional berries, cloves or leaves, break them up or round to taste.</p>
+</div>
+<div class="actions"><button id="copy" type="button">Copy recipe</button><button id="print" type="button">Print recipe</button></div>
+<p id="status" role="status"></p>
+<textarea id="copyFallback" aria-label="Recipe text to copy" readonly hidden></textarea>
+</section>
+</div>
+<section class="card">
+<h2>Pack and refrigerate</h2>
+<ol id="method">
+<li>Wash and trim the cucumbers, then slice or cut into spears. Divide the spices among clean, heatproof jars and pack the cucumbers snugly.</li>
+<li>Combine food-grade 8% vinegar, water, preserving salt and optional sugar. If using food-grade calcium chloride flakes, stir in the measured dose. Bring to a boil for 2 minutes.</li>
+<li>Pour the hot brine over the cucumbers to cover, leaving about 1.3 cm headspace. Lid the jars and refrigerate promptly at 4 °C or colder. Allow 1–2 days for flavour to develop. Use within 2 weeks of making.</li>
+<li>If you need more brine, make a fresh portion at the same ratio. For 100 mL, use 31.3 mL of 8% vinegar, 68.7 mL water, 3 mL preserving salt and, if using sugar, 0.8 g. If using the flakes, scale them at the same rate of 1.25 mL per litre. Bring it to a boil for 2 minutes before adding.</li>
+</ol>
+</section>
+<section class="card">
+<h2>How the estimate works</h2>
+<p>The default assumes 600 g of cucumber fills 1 L of nominal jar capacity and 1 g displaces about 1 mL. That leaves an estimated 400 mL of brine space per litre of packed jars. The calculator adds 15% by default and rounds the automatic estimate up to the next 10 mL.</p>
+<p>Jar count rounds up so you have enough containers. The estimate only counts the space around the cucumbers you pack, so it allows for a partly filled final jar. Headspace and jar shape are approximate. Cut, packing density and evaporation can change how much brine you need. Keep a smaller jar handy for the remainder, and make extra brine if needed.</p>
+<p>Australian metric measures use a 5 mL teaspoon and a 20 mL tablespoon. Use food-grade <a href="https://artisansbottega.com.au/products/calcium-chloride-flakes-pickle-crisper">Artisans Bottega calcium chloride flakes</a> marked 77% CaCl₂ (E509). The stated pack dose is 1.25 mL per litre of brine. Follow the pack directions for use.</p>
+<p>This is a home adaptation of the UC Master Food Preserver sour refrigerator pickle recipe. The 8% vinegar conversion, spice blend and optional crisper are adaptations and have not been validated by UC. <a href="https://ucanr.edu/sites/default/files/2025-07/MFP%20Quick%20Refrigerator%20Pickles.pdf">UC Extension Quick Refrigerator Pickles (PDF)</a></p>
+</section>
+</main>
+<script>
+'use strict';
+const byId = id => document.getElementById(id);
+const format = new Intl.NumberFormat('en-AU', {maximumFractionDigits: 3});
+const number = value => format.format(value);
+const spiceRates = [
+  ['Whole yellow mustard seeds', 5, 'mL'],
+  ['Whole dill seeds', 5, 'mL'],
+  ['Whole black peppercorns', 2.5, 'mL'],
+  ['Whole coriander seeds', 2.5, 'mL'],
+  ['Whole allspice berries', 2, ''],
+  ['Small bay leaves', 1, ''],
+  ['Cinnamon quill', 1, 'cm'],
+  ['Whole cloves', 1, '']
+];
+const form = byId('batch');
+let recipeText = '';
+let previousUnit = byId('unit').value;
+
+function quantity(value, unit) {
+  const amount = value > 0 && value < 0.001 ? value.toPrecision(3) : number(value);
+  return unit ? amount + ' ' + unit : amount;
+}
+
+function renderRows(id, rows) {
+  const table = byId(id);
+  table.replaceChildren();
+  for (const [name, amount] of rows) {
+    const row = document.createElement('tr');
+    const label = document.createElement('th');
+    const value = document.createElement('td');
+    label.scope = 'row';
+    label.textContent = name;
+    value.textContent = amount;
+    row.append(label, value);
+    table.append(row);
+  }
+}
+
+function update() {
+  const grams = byId('weight').valueAsNumber * (byId('unit').value === 'kg' ? 1000 : 1);
+  const jar = byId('jar').valueAsNumber;
+  const packedCapacity = 1000 * grams / byId('packing').valueAsNumber;
+  const jars = Math.ceil(packedCapacity / jar);
+  const base = packedCapacity - grams;
+  const estimate = Math.ceil(base * (1 + byId('extra').valueAsNumber / 100) / 10) * 10;
+  const override = byId('override');
+  const volume = override.value === '' ? estimate : override.valueAsNumber;
+  const valid = form.checkValidity() && grams > 0 && [grams, jars, base, estimate, volume].every(Number.isFinite);
+  byId('copy').disabled = byId('print').disabled = !valid;
+  byId('ingredients').hidden = !valid;
+  byId('copyFallback').hidden = true;
+  byId('status').textContent = '';
+  if (!valid) {
+    recipeText = '';
+    byId('summary').textContent = 'Enter a positive weight and jar size, a packing yield from 1 to 999, and a non-negative overage. Leave the override blank or enter at least 1 mL.';
+    return;
+  }
+  const litres = volume / 1000;
+  const sugar = byId('sugar').checked;
+  const brine = [
+    ['Food-grade 8% vinegar', quantity(313 * litres, 'mL')],
+    ['Water', quantity(687 * litres, 'mL')],
+    ['Preserving salt', quantity(30 * litres, 'mL')],
+    ['Sugar (optional)', sugar ? quantity(8 * litres, 'g') : 'Omitted'],
+    ['Artisans Bottega calcium chloride flakes (77% CaCl₂, E509)',
+      byId('crisper').checked ? quantity(1.25 * litres, 'mL') + ' (' + quantity(0.25 * litres, 'tsp') + ')' : 'Omitted']
+  ];
+  const spices = spiceRates.map(([name, rate, unit]) => [name, quantity(rate * litres, unit)]);
+  const headline = quantity(volume, 'mL') + ' brine';
+  const details = number(grams) + ' g cucumbers · about ' + number(jars) + ' × ' + quantity(jar, 'mL') +
+    ' jars · ' + quantity(base, 'mL') + ' estimated before extra' +
+    (override.value === '' ? '' : ' · manual override' + (volume < base ? ' (below estimated need)' : ''));
+  const summary = byId('summary');
+  const strong = document.createElement('strong');
+  strong.textContent = headline;
+  summary.replaceChildren(strong, document.createElement('br'), document.createTextNode(details));
+  renderRows('brine', brine);
+  renderRows('spices', spices);
+  recipeText = [
+    document.title, headline, details,
+    '', 'BRINE', ...brine.map(row => row.join(' — ')),
+    '', 'WHOLE SPICES (divide across packed jars)', ...spices.map(row => row.join(' — ')),
+    '', 'FRIDGE ONLY. Keep at 4 °C or colder. Use within 2 weeks. Not shelf stable.',
+    ...Array.from(byId('method').children, (li, index) => (index + 1) + '. ' + li.textContent)
+  ].join('\n');
+}
+
+form.addEventListener('submit', event => event.preventDefault());
+form.addEventListener('input', () => {
+  const unit = byId('unit').value;
+  const weight = byId('weight');
+  if (unit !== previousUnit && Number.isFinite(weight.valueAsNumber)) {
+    const converted = weight.valueAsNumber * (unit === 'kg' ? 0.001 : 1000);
+    weight.value = Number(converted.toPrecision(15));
+  }
+  previousUnit = unit;
+  update();
+});
+
+byId('print').addEventListener('click', () => window.print());
+byId('copy').addEventListener('click', async () => {
+  const snapshot = recipeText;
+  const field = byId('copyFallback');
+  try {
+    await navigator.clipboard.writeText(snapshot);
+    if (snapshot === recipeText) {
+      field.hidden = true;
+      byId('status').textContent = 'Recipe copied.';
+    }
+  } catch {
+    if (snapshot !== recipeText) return;
+    field.value = snapshot;
+    field.hidden = false;
+    field.focus();
+    field.select();
+    byId('status').textContent = 'Recipe selected. Use your device’s Copy command.';
+  }
+});
+update();
+</script>
+</html>
+
