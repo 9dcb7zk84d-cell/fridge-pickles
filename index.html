@@ -56,7 +56,7 @@ table{width:100%;border-collapse:collapse}caption{text-align:left;font-weight:75
 <div id="ingredients">
 <table><caption>Brine</caption><tbody id="brine"></tbody></table>
 <table><caption>Whole spices · divide across packed jars</caption><tbody id="spices"></tbody></table>
-<p class="muted">For fractional berries, cloves or leaves, break them up or round to taste.</p>
+<small id="spiceNote">Measure whole seeds and peppercorns with a level measuring spoon. 1 tsp = 5 mL. Simple eighth-teaspoon fractions are shown where they fit the batch; other amounts use decimal teaspoons. Cinnamon means a cut or snapped length of quill. For fractional berries, cloves or leaves, break them up or round to taste.</small>
 </div>
 <div class="actions"><button id="copy" type="button">Copy recipe</button><button id="print" type="button">Print recipe</button></div>
 <p id="status" role="status"></p>
@@ -86,10 +86,10 @@ const byId = id => document.getElementById(id);
 const format = new Intl.NumberFormat('en-AU', {maximumFractionDigits: 3});
 const number = value => format.format(value);
 const spiceRates = [
-  ['Whole yellow mustard seeds', 5, 'mL'],
-  ['Whole dill seeds', 5, 'mL'],
-  ['Whole black peppercorns', 2.5, 'mL'],
-  ['Whole coriander seeds', 2.5, 'mL'],
+  ['Whole yellow mustard seeds', 1, 'tsp'],
+  ['Whole dill seeds', 1, 'tsp'],
+  ['Whole black peppercorns', 0.5, 'tsp'],
+  ['Whole coriander seeds', 0.5, 'tsp'],
   ['Whole allspice berries', 2, ''],
   ['Small bay leaves', 1, ''],
   ['Cinnamon quill', 1, 'cm'],
@@ -102,6 +102,17 @@ let previousUnit = byId('unit').value;
 function quantity(value, unit) {
   const amount = value > 0 && value < 0.001 ? value.toPrecision(3) : number(value);
   return unit ? amount + ' ' + unit : amount;
+}
+
+function spiceQuantity(value, unit) {
+  if (unit !== 'tsp') return quantity(value, unit);
+  const eighths = Math.round(value * 8);
+  if (Math.abs(value * 8 - eighths) > 0.00000001 || eighths === 0) {
+    return quantity(value, unit);
+  }
+  const whole = Math.floor(eighths / 8);
+  const fraction = ['', '⅛', '¼', '⅜', '½', '⅝', '¾', '⅞'][eighths % 8];
+  return (whole ? number(whole) : '') + (whole && fraction ? ' ' : '') + fraction + ' tsp';
 }
 
 function renderRows(id, rows) {
@@ -148,7 +159,7 @@ function update() {
     ['Artisans Bottega calcium chloride flakes (77% CaCl₂, E509)',
       byId('crisper').checked ? quantity(1.25 * litres, 'mL') + ' (' + quantity(0.25 * litres, 'tsp') + ')' : 'Omitted']
   ];
-  const spices = spiceRates.map(([name, rate, unit]) => [name, quantity(rate * litres, unit)]);
+  const spices = spiceRates.map(([name, rate, unit]) => [name, spiceQuantity(rate * litres, unit)]);
   const headline = quantity(volume, 'mL') + ' brine';
   const details = number(grams) + ' g cucumbers · about ' + number(jars) + ' × ' + quantity(jar, 'mL') +
     ' jars · ' + quantity(base, 'mL') + ' estimated before extra' +
@@ -162,7 +173,7 @@ function update() {
   recipeText = [
     document.title, headline, details,
     '', 'BRINE', ...brine.map(row => row.join(' — ')),
-    '', 'WHOLE SPICES (divide across packed jars)', ...spices.map(row => row.join(' — ')),
+    '', 'WHOLE SPICES (divide across packed jars)', ...spices.map(row => row.join(' — ')), byId('spiceNote').textContent,
     '', 'FRIDGE ONLY. Keep at 4 °C or colder. Use within 2 weeks. Not shelf stable.',
     ...Array.from(byId('method').children, (li, index) => (index + 1) + '. ' + li.textContent)
   ].join('\n');
