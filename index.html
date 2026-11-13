@@ -2,7 +2,7 @@
 <html lang="en-AU">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Fridge Pickles</title>
+<title>Fridge Pickles v 1.1</title>
 <style>
 :root{color-scheme:light;--ink:#213827;--green:#284b36;--paper:#faf7ed;--line:#d9dfce;--muted:#475b49}
 *{box-sizing:border-box}body{margin:0;background:var(--paper);color:var(--ink);font:1rem/1.55 system-ui,sans-serif}
@@ -23,10 +23,11 @@ table{width:100%;border-collapse:collapse}caption{text-align:left;font-weight:75
 :focus-visible{outline:3px solid #99702b;outline-offset:3px}a{color:#285039}li+li{margin-top:.45rem}textarea{min-height:12rem;margin-top:.6rem}#status{margin:0}
 @media(max-width:42rem){.grid{grid-template-columns:1fr}}
 @media print{body,.card,header,.notice,.summary{background:white;color:black}header{padding:0}h1{font-size:2rem;max-width:none}main{padding:0}.grid{display:block}.controls,.actions,#status,#copyFallback,.eyebrow,header p{display:none!important}.card{padding:.5rem 0;border:0}tr,li{break-inside:avoid}}
+.version-history{font-size:.7rem;color:var(--muted);line-height:1.4}.version-history p{margin:.2rem 0}
 </style>
 <header>
 <div class="eyebrow">Small-batch kitchen · Australian metric</div>
-<h1>Fridge Pickles</h1>
+<h1>Fridge Pickles v 1.1</h1>
 <p>Weigh your cucumbers, estimate how much brine will fit around them, and scale the whole-spice mix to suit.</p>
 </header>
 <main>
@@ -47,7 +48,7 @@ table{width:100%;border-collapse:collapse}caption{text-align:left;font-weight:75
 <small>Leave blank to use the estimate plus extra brine. An override replaces both.</small>
 <label><input id="sugar" type="checkbox" checked> Include optional sugar</label>
 <label><input id="crisper" type="checkbox"> Include calcium chloride flakes</label>
-<small>Artisans Bottega 77% CaCl₂ flakes (E509). Pack dose: ¼ Australian teaspoon per litre of brine.</small>
+<small>Artisans Bottega 77% CaCl₂ flakes (E509). Recipe dose: ⅛ Australian teaspoon (0.625 mL) per litre of brine.</small>
 </form>
 </section>
 <section class="card" aria-labelledby="recipe">
@@ -69,16 +70,20 @@ table{width:100%;border-collapse:collapse}caption{text-align:left;font-weight:75
 <li>Wash and trim the cucumbers, then slice or cut into spears. Divide the spices among clean, heatproof jars and pack the cucumbers snugly.</li>
 <li>Combine food-grade 8% vinegar, water, preserving salt and optional sugar. If using food-grade calcium chloride flakes, stir in the measured dose. Bring to a boil for 2 minutes.</li>
 <li>Pour the hot brine over the cucumbers to cover, leaving about 1.3 cm headspace. Lid the jars and refrigerate promptly at 4 °C or colder. Allow 1–2 days for flavour to develop. Use within 2 weeks of making.</li>
-<li>If you need more brine, make a fresh portion at the same ratio. For 100 mL, use 31.3 mL of 8% vinegar, 68.7 mL water, 3 mL preserving salt and, if using sugar, 0.8 g. If using the flakes, scale them at the same rate of 1.25 mL per litre. Bring it to a boil for 2 minutes before adding.</li>
+<li>If you need more brine, make a fresh portion at the same ratio. For 100 mL, use 31.3 mL of 8% vinegar, 68.7 mL water, 3 mL preserving salt and, if using sugar, 0.8 g. If using the flakes, scale them at the same rate of 0.625 mL per litre. Bring it to a boil for 2 minutes before adding.</li>
 </ol>
 </section>
 <section class="card">
 <h2>How the estimate works</h2>
-<p>The default assumes 600 g of cucumber fills 1 L of nominal jar capacity and 1 g displaces about 1 mL. That leaves an estimated 400 mL of brine space per litre of packed jars. The calculator adds 15% by default and rounds the automatic estimate up to the next 10 mL.</p>
+<p>The default assumes 600 g of cucumber fills 1 L of nominal jar capacity and 1 g displaces about 1 mL. That leaves an estimated 400 mL of brine space per litre of packed jars. The calculator adds 15% by default rounds that volume up to the next 10 mL, then increases it by 50%.</p>
 <p>Jar count rounds up so you have enough containers. The estimate only counts the space around the cucumbers you pack, so it allows for a partly filled final jar. Headspace and jar shape are approximate. Cut, packing density and evaporation can change how much brine you need. Keep a smaller jar handy for the remainder, and make extra brine if needed.</p>
-<p>Australian metric measures use a 5 mL teaspoon and a 20 mL tablespoon. Use food-grade <a href="https://artisansbottega.com.au/products/calcium-chloride-flakes-pickle-crisper">Artisans Bottega calcium chloride flakes</a> marked 77% CaCl₂ (E509). The stated pack dose is 1.25 mL per litre of brine. Follow the pack directions for use.</p>
+<p>Australian metric measures use a 5 mL teaspoon and a 20 mL tablespoon. Use food-grade <a href="https://artisansbottega.com.au/products/calcium-chloride-flakes-pickle-crisper">Artisans Bottega calcium chloride flakes</a> marked 77% CaCl₂ (E509). This recipe uses half the stated pack dose, or 0.625 mL per litre of brine.</p>
 <p>This is a home adaptation of the UC Master Food Preserver sour refrigerator pickle recipe. The 8% vinegar conversion, spice blend and optional crisper are adaptations and have not been validated by UC. <a href="https://ucanr.edu/sites/default/files/2025-07/MFP%20Quick%20Refrigerator%20Pickles.pdf">UC Extension Quick Refrigerator Pickles (PDF)</a></p>
 </section>
+<footer class="version-history" aria-label="Version history">
+<p>v1.0 · Oct 2026</p>
+<p>v1.1 · 13 Nov 2026 · Brine volume up 50%, more garlic and dill, halved CaCl₂ dose</p>
+</footer>
 </main>
 <script>
 'use strict';
@@ -87,7 +92,8 @@ const format = new Intl.NumberFormat('en-AU', {maximumFractionDigits: 3});
 const number = value => format.format(value);
 const spiceRates = [
   ['Whole yellow mustard seeds', 1, 'tsp'],
-  ['Whole dill seeds', 1, 'tsp'],
+  ['Whole dill seeds', 2, 'tsp'],
+  ['Garlic cloves, lightly crushed', 8 / 3, ''],
   ['Whole black peppercorns', 0.5, 'tsp'],
   ['Whole coriander seeds', 0.5, 'tsp'],
   ['Whole allspice berries', 2, ''],
@@ -136,7 +142,7 @@ function update() {
   const packedCapacity = 1000 * grams / byId('packing').valueAsNumber;
   const jars = Math.ceil(packedCapacity / jar);
   const base = packedCapacity - grams;
-  const estimate = Math.ceil(base * (1 + byId('extra').valueAsNumber / 100) / 10) * 10;
+  const estimate = Math.ceil(base * (1 + byId('extra').valueAsNumber / 100) / 10) * 15;
   const override = byId('override');
   const volume = override.value === '' ? estimate : override.valueAsNumber;
   const valid = form.checkValidity() && grams > 0 && [grams, jars, base, estimate, volume].every(Number.isFinite);
@@ -157,7 +163,7 @@ function update() {
     ['Preserving salt', quantity(30 * litres, 'mL')],
     ['Sugar (optional)', sugar ? quantity(8 * litres, 'g') : 'Omitted'],
     ['Artisans Bottega calcium chloride flakes (77% CaCl₂, E509)',
-      byId('crisper').checked ? quantity(1.25 * litres, 'mL') + ' (' + quantity(0.25 * litres, 'tsp') + ')' : 'Omitted']
+      byId('crisper').checked ? quantity(0.625 * litres, 'mL') + ' (' + spiceQuantity(0.125 * litres, 'tsp') + ')' : 'Omitted']
   ];
   const spices = spiceRates.map(([name, rate, unit]) => [name, spiceQuantity(rate * litres, unit)]);
   const headline = quantity(volume, 'mL') + ' brine';
